@@ -1,0 +1,30 @@
+{
+    "version": "1.0.0",
+    "name": "payment_api",
+    "module": "src/index.ts",
+    "type": "module",
+    "scripts": {
+        "build": "bun build ./src/index.ts --outdir ./build --target node ",
+        "build:node": "tsc --project tsconfig.node.json",
+        "dev:node": "node --env-file=.env.dev ./build.node/index.js ",
+        "dev": "bun --watch --env-file=.env.dev src/index.ts ",
+        "prod": "bun --watch --env-file=.env.prod src/index.ts "
+    },
+    "engines": {
+        "node": ">=20.6.0"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@types/express": "^4.17.21",
+        "@types/uuid": "^10.0.0"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "axios": "^1.7.7",
+        "express": "^4.19.2",
+        "uuid": "^10.0.0",
+        "zod": "^3.23.8"
+    }
+}
