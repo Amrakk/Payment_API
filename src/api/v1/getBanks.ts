@@ -1,5 +1,5 @@
-import { isAxiosError } from "axios";
 import { VietQR, Momo } from "../../services/index.js";
+import { errorLogger } from "../../middlewares/logger/loggers.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
 import type { Request, Response } from "express";
@@ -21,8 +21,7 @@ export async function getBanks(req: Request, res: Response<IResponse<IBanks>>) {
 
         return res.status(200).send({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: banks });
     } catch (err) {
-        if (isAxiosError(err)) console.log(err.message); // TODO: log error
-        else console.log(err); // TODO: log error
+        if (err instanceof Error) errorLogger(err, req);
         return res
             .status(500)
             .send({ code: RESPONSE_CODE.INTERNAL_SERVER_ERROR, message: RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR });

@@ -1,7 +1,8 @@
-export const PORT = process.env.PORT ?? 3000;
+export const PORT = parseInt(process.env.PORT ?? "3000");
 export const BASE_URL = process.env.BASE_URL ?? "/api/v1";
 export const HOST = process.env.HOST ?? "http://localhost";
 export const DB_PATH = process.env.DB_PATH ?? "data.enc";
+export const ERROR_LOG_PATH = process.env.ERROR_LOG_PATH ?? "error.log";
 
 // ENCRYPTION
 export const SECRET_KEY = process.env.SECRET_KEY!;

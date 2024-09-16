@@ -3,12 +3,14 @@ import readline from "readline";
 import router from "./routes/api.js";
 import { Database } from "./database/db.js";
 import { BASE_URL, PORT } from "./constants.js";
+import { requestLogger } from "./middlewares/logger/loggers.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(requestLogger);
 app.use(BASE_URL, router);
 
 app.on("close", async () => {
@@ -19,7 +21,7 @@ app.on("close", async () => {
     process.exit();
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, "0.0.0.0", async () => {
     await Database.getInstance()
         .init()
         .then(() => console.log("Database initialized"))
