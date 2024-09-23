@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { IMomo } from "../interfaces/bankingServices/index.js";
 
-/** Refer to: **{@link IMomo.SUPPORT_LANG IMomo.SUPPORT_LANG}** */
-export const SupportLangSchema = z.nativeEnum(IMomo.SUPPORT_LANG);
+/** Refer to: **{@link IMomo.SUPPORTED_LANG IMomo.SUPPORT_LANG}** */
+export const SupportLangSchema = z.nativeEnum(IMomo.SUPPORTED_LANG);
 /** Refer to: **{@link IMomo.REQUEST_TYPE IMomo.REQUEST_TYPE}** */
 export const RequestTypeSchema = z.nativeEnum(IMomo.REQUEST_TYPE);
 

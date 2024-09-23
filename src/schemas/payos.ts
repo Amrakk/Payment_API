@@ -10,9 +10,9 @@ export const ItemSchema = z.object({
 
 /** Refer to: {@link IPayOS.PaymentLinkRequest IPayOS.PaymentLinkRequest} */
 export const PaymentLinkRequestSchema = z.object({
-    orderCode: z.number(),
-    amount: z.number().min(1000),
-    description: z.string().max(9),
+    orderCode: z.number().int().min(0).max(9007199254740991),
+    amount: z.number().min(0.01).max(10000000000),
+    description: z.string().max(25),
     buyerName: z.string().nullable().optional(),
     buyerEmail: z.string().email().nullable().optional(),
     buyerPhone: z.string().nullable().optional(),
