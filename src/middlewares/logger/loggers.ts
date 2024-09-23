@@ -74,7 +74,11 @@ export async function errorLogger(err: Error, req: Request) {
     const keys = Object.keys(err);
     for (const key of keys) {
         if (key === "name" || key === "message" || key === "stack") continue;
-        log += `\n\t${decorators.singleLine} [${key.toUpperCase()}]: ${(err as any)[key]}`;
+        log += `\n\t${decorators.singleLine} [${key.toUpperCase()}]: ${JSON.stringify(
+            (err as any)[key],
+            undefined,
+            4
+        ).replace(/\n/g, "\n\t\t")}`;
     }
 
     if (err.stack) {
