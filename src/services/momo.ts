@@ -1,17 +1,19 @@
-import axios from "axios";
 import { MOMO_URL } from "../constants.js";
+import axios, { isAxiosError } from "axios";
 import { Database } from "../database/db.js";
 import { MomoSchema } from "../schemas/index.js";
 import { getIpnUrl } from "../utils/getIpnUrl.js";
 import { generateSignature } from "../utils/encryption.js";
+import { MomoResultHandler } from "../utils/resultHandler/index.js";
 import { TransactionStatusRequestInputSchema } from "../schemas/momo.js";
 
 import ValidateError from "../errors/validateError.js";
+import PaymentApiError from "../errors/paymentApiError.js";
 import UnsupportedError from "../errors/unsupportedError.js";
 
 import type { Response } from "express";
-import type { IMomo } from "../interfaces/bankingServices/index.js";
 import type { User } from "../interfaces/database/user.js";
+import type { IMomo } from "../interfaces/bankingServices/index.js";
 
 export async function getBanks(): Promise<IMomo.ResponseGetBanks> {
     return axios.get<IMomo.ResponseGetBanks>(`${MOMO_URL}/bankcodes`).then((res) => res.data);
@@ -33,21 +35,28 @@ export async function getPaymentLink(
     const rawSignature = `accessKey=${accessKey}&amount=${rest.amount}&extraData=${rest.extraData}&ipnUrl=${apiIpnUrl}&orderId=${rest.orderId}&orderInfo=${rest.orderInfo}&partnerCode=${partnerCode}&redirectUrl=${rest.redirectUrl}&requestId=${rest.requestId}&requestType=${rest.requestType}`;
     const signature = generateSignature(secretKey, rawSignature, "momo");
 
-    const response = await axios.post<IMomo.PaymentLinkResponse>(`${MOMO_URL}/create`, {
-        ...rest,
-        ipnUrl: apiIpnUrl,
-        signature: signature,
-    });
+    const response = await axios
+        .post<IMomo.PaymentLinkResponse>(`${MOMO_URL}/create`, {
+            ...rest,
+            ipnUrl: apiIpnUrl,
+            signature: signature,
+        })
+        .then((res) => MomoResultHandler.resultHandler(res.status, res.data))
+        .catch((err) => {
+            if (isAxiosError<IMomo.PaymentLinkResponse>(err) && err.response)
+                return MomoResultHandler.resultHandler(err.response.status, err.response.data);
+            throw err;
+        });
 
-    // TODO: handle response error. (should handle response code from momo)
-
-    return response.data;
+    return response;
 }
 
 export async function paymentLinkCallback(clientId: string, reqBody: IMomo.PaymentLinkCallbackRequest, res: Response) {
     res.status(204);
 
     const user = await Database.getInstance().getUserById(clientId);
+    if (!user)
+        throw new PaymentApiError("PayOS", "paymentLinkCallback", "User not found in database", { clientId, reqBody });
 
     if (user)
         await axios.post(user.ipnUrl, reqBody, {
@@ -72,12 +81,17 @@ export async function transactionStatus(
     var rawSignature = `accessKey=${accessKey}&orderId=${rest.orderId}&partnerCode=${partnerCode}&requestId=${rest.requestId}`;
     var signature = generateSignature(secretKey, rawSignature, "momo");
 
-    const response = await axios.post<IMomo.TransactionStatusResponse>(`${MOMO_URL}/query`, {
-        ...rest,
-        signature: signature,
-    });
+    const response = await axios
+        .post<IMomo.TransactionStatusResponse>(`${MOMO_URL}/query`, {
+            ...rest,
+            signature: signature,
+        })
+        .then((res) => MomoResultHandler.resultHandler(res.status, res.data))
+        .catch((err) => {
+            if (isAxiosError<IMomo.TransactionStatusResponse>(err) && err.response)
+                return MomoResultHandler.resultHandler(err.response.status, err.response.data);
+            throw err;
+        });
 
-    // TODO: handle response error. (should handle response code from momo)
-
-    return response.data;
+    return response;
 }

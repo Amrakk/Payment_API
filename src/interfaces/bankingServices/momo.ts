@@ -1,8 +1,10 @@
+/** @see https://developers.momo.vn/v3/docs/payment/api/result-handling/bankcode */
 export interface ResponseGetBanks {
     /** Bank code */
     [bankCode: string]: Bank;
 }
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/result-handling/bankcode */
 export interface Bank {
     /** The six first bin digits */
     bin: string;
@@ -23,6 +25,7 @@ export interface Bank {
 
 export interface PaymentLinkRequestInput extends Omit<PaymentLinkRequest, "signature" | "partnerCode" | "ipnUrl"> {}
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/collection-link/ */
 export interface PaymentLinkRequest extends RequestBase {
     /** Partner Name */
     partnerName?: string;
@@ -50,6 +53,7 @@ export interface PaymentLinkRequest extends RequestBase {
     autoCapture: boolean;
 }
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/collection-link/ */
 export interface PaymentLinkResponse extends ResponseBase {
     /** Same as the original request */
     requestId: string;
@@ -73,8 +77,15 @@ export interface PaymentLinkResponse extends ResponseBase {
 
     /** PAY_WITH_CC */
     /** PAY_WITH_ATM */
+    /** PAY_WITH_APPLE_PAY */
+    /** INITIATE */
+    /** LINKWALLET */
+    /** SUBSCRIPTION */
+    /** PAY_WITH_VTS */
+    /** ON_DELIVERY */
 }
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/result-handling/notification */
 export interface PaymentLinkCallbackRequest {
     /** Integration information */
     partnerCode: string;
@@ -104,7 +115,7 @@ export interface PaymentLinkCallbackRequest {
     signature: string;
 }
 
-export enum SUPPORT_LANG {
+export enum SUPPORTED_LANG {
     VI = "vi",
     EN = "en",
 }
@@ -169,8 +180,10 @@ export interface UserInfo {
 
 export interface TransactionStatusRequestInput extends Omit<TransactionStatusRequest, "signature" | "partnerCode"> {}
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/payment-api/query */
 export interface TransactionStatusRequest extends RequestBase {}
 
+/** @see https://developers.momo.vn/v3/docs/payment/api/payment-api/query */
 export interface TransactionStatusResponse extends ResponseBase {
     /** Unique ID for the request */
     requestId: string;
@@ -228,7 +241,7 @@ export interface RequestBase {
     /** Request ID, unique for each request, used for idempotency control */
     requestId: string;
     /** Language of returned message (vi or en) */
-    lang: SUPPORT_LANG;
+    lang: SUPPORTED_LANG;
     /** Secure transaction signature using Hmac_SHA256 */
     signature: string;
 }
@@ -244,4 +257,87 @@ export interface ResponseBase {
     message: string;
     /** Result code of the transaction status */
     resultCode: number;
+}
+
+/** @see https://developers.momo.vn/v3/docs/payment/api/result-handling/resultcode/ */
+export enum RESULT_CODE {
+    /** Successful. */
+    SUCCESS = 0,
+    /** System is under maintenance. */
+    SYSTEM_MAINTENANCE = 10,
+    /** Access denied. */
+    ACCESS_DENIED = 11,
+    /** Unsupported API version for this request. */
+    UNSUPPORTED_API_VERSION = 12,
+    /** Merchant authentication failed.	*/
+    MERCHANT_AUTHENTICATION_FAILED = 13,
+    /** Bad format request. */
+    BAD_FORMAT_REQUEST = 20,
+    /** Request rejected due to invalid transaction amount. */
+    INVALID_TRANSACTION_AMOUNT = 21,
+    /** The transaction amount is out of range. */
+    TRANSACTION_AMOUNT_OUT_OF_RANGE = 22,
+    /** Duplicated requestId. */
+    DUPLICATED_REQUEST_ID = 40,
+    /** Duplicated orderId. */
+    DUPLICATED_ORDER_ID = 41,
+    /** Invalid orderId or orderId is not found. */
+    INVALID_ORDER_ID = 42,
+    /** Request rejected due to an analogous transaction is being processed. */
+    ANALOGOUS_TRANSACTION_BEING_PROCESSED = 43,
+    /** Duplicated ItemId */
+    DUPLICATED_ITEM_ID = 45,
+    /** Request rejected due to inapplicable information in the given set of valuable data. */
+    INAPPLICABLE_INFORMATION = 47,
+    /** This QR Code has not been generated successfully. Please try again later. */
+    QR_CODE_NOT_GENERATED = 98,
+    /** Unknown error. */
+    UNKNOWN_ERROR = 99,
+    /** Transaction is initiated, waiting for user confirmation. */
+    TRANSACTION_INITIATED = 1000,
+    /** Transaction failed due to insufficient funds. */
+    INSUFFICIENT_FUNDS = 1001,
+    /** Transaction rejected by the issuers of the payment methods.	 */
+    REJECTED_BY_ISSUER = 1002,
+    /** Transaction cancelled after successfully authorized. */
+    TRANSACTION_CANCELLED = 1003,
+    /** Transaction failed because the amount exceeds daily /monthly payment limit. */
+    EXCEEDS_PAYMENT_LIMIT = 1004,
+    /** Transaction failed because the url or QR code expired. */
+    URL_OR_QR_CODE_EXPIRED = 1005,
+    /** Transaction failed because user has denied to confirm the payment. */
+    USER_DENIED_PAYMENT = 1006,
+    /** Transaction rejected due to inactive or nonexistent user's account. */
+    INACTIVE_OR_NONE_EXISTENT_USER_ACCOUNT = 1007,
+    /** Transaction cancelled by merchant. */
+    CANCELLED_BY_MERCHANT = 1017,
+    /** Transaction restricted due to promotion rules. */
+    RESTRICTED_BY_PROMOTION_RULES = 1026,
+    /** Refund attempt failed during the processing. Please retry within a short period, preferably after an hour. */
+    REFUND_FAILED = 1080,
+    /** Refund rejected. The original transaction might have been refunded. */
+    REFUND_REJECTED = 1081,
+    /** Refund rejected. The original payment transaction is ineligible to be refunded. */
+    INELIGIBLE_FOR_REFUND = 1088,
+    /** Request rejected due to invalid orderGroupId. */
+    INVALID_ORDER_GROUP_ID = 2019,
+    /** Transaction rejected because the user account is being restricted. */
+    USER_ACCOUNT_RESTRICTED = 4001,
+    /** Transaction failed because user has failed to login. */
+    USER_LOGIN_FAILED = 4100,
+    /** Transaction is being processed. */
+    TRANSACTION_BEING_PROCESSED = 7000,
+    /** Transaction is being processed by the provider of the payment instrument selected. */
+    PROVIDER_PROCESSING = 7002,
+    /** Transaction is authorized successfully. */
+    AUTHORIZED_SUCCESSFULLY = 9000,
+}
+
+/** @see https://developers.momo.vn/v3/docs/payment/api/result-handling/resultcode/ */
+export enum RESULT_TYPE {
+    NONE = "None",
+    SYSTEM_ERROR = "System error",
+    MERCHANT_ERROR = "Merchant error",
+    USER_ERROR = "User error",
+    PENDING = "Pending",
 }

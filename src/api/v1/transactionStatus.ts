@@ -1,14 +1,14 @@
 import { Momo, PayOS } from "../../services/index.js";
-import { errorLogger } from "../../middlewares/logger/loggers.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
-import ValidateError from "../../errors/validateError.js";
-import UnsupportedError from "../../errors/unsupportedError.js";
-
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { IResponse, ITransactionStatus } from "../../interfaces/api/index.js";
 
-export async function transactionStatus(req: Request, res: Response<IResponse<ITransactionStatus>>) {
+export async function transactionStatus(
+    req: Request,
+    res: Response<IResponse<ITransactionStatus>>,
+    next: NextFunction
+) {
     const { service } = req.query;
     const user = req.context!.user;
 
@@ -25,20 +25,6 @@ export async function transactionStatus(req: Request, res: Response<IResponse<IT
 
         return res.status(200).send({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: result });
     } catch (err) {
-        if (err instanceof ValidateError)
-            return res
-                .status(400)
-                .send({ code: RESPONSE_CODE.VALIDATION_ERROR, message: RESPONSE_MESSAGE.VALIDATION_ERROR, error: err });
-        else if (err instanceof UnsupportedError)
-            return res.status(409).send({
-                code: RESPONSE_CODE.UNSUPPORTED_ERROR,
-                message: RESPONSE_MESSAGE.UNSUPPORTED_ERROR,
-                error: err,
-            });
-
-        if (err instanceof Error) errorLogger(err, req);
-        return res
-            .status(500)
-            .send({ code: RESPONSE_CODE.INTERNAL_SERVER_ERROR, message: RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR });
+        next(err);
     }
 }

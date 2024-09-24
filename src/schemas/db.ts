@@ -36,9 +36,16 @@ export const UserSchema = (users: User[], update?: { updateUser: User }) => {
                 ipnUrl: z
                     .string()
                     .url()
-                    .refine(async (url) => await axios.post(url).then((res) => res.status === 204), {
-                        message: "Invalid IPN URL",
-                    }),
+                    .refine(
+                        async (url) =>
+                            await axios
+                                .post(url)
+                                .then((res) => res.status === 204)
+                                .catch((_) => false),
+                        {
+                            message: "Invalid IPN URL or unreachable",
+                        }
+                    ),
                 services: z.object({
                     momo: MomoSchema.optional(),
                     payos: PayOSSchema.optional(),
@@ -63,9 +70,23 @@ export const UserSchema = (users: User[], update?: { updateUser: User }) => {
             ipnUrl: z
                 .string()
                 .url()
-                .refine(async (url) => await axios.post(url).then((res) => res.status === 204), {
-                    message: "Invalid IPN URL",
-                }),
+                .refine(
+                    async (url) =>
+                        await axios
+                            .post(url)
+                            .then((res) => {
+                                console.log(res.status);
+                                return res.status === 204;
+                            })
+                            .catch((_) => {
+                                // console.log(_);
+                                console.log(4152525, url);
+                                return false;
+                            }),
+                    {
+                        message: "Invalid IPN URL or unreachable",
+                    }
+                ),
             services: z.object({
                 momo: MomoSchema.optional(),
                 payos: PayOSSchema.optional(),

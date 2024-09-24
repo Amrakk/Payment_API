@@ -17,10 +17,6 @@ export async function verify(req: Request, res: Response<IResponse<unknown>>, ne
 
         next();
     } catch (err) {
-        console.log(err);
-
-        return res
-            .status(500)
-            .send({ code: RESPONSE_CODE.INTERNAL_SERVER_ERROR, message: RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR });
+        next(err);
     }
 }

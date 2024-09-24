@@ -76,3 +76,21 @@ export enum TEMPLATE {
     /** QR, Logo, info - 540x640*/
     COMPACT2 = "compact2",
 }
+
+/** Always response with status 200 */
+export enum ResultCode {
+    SUCCESS = "00",
+
+    MISSING_PARAMETER = "01",
+    MISSING_BANK_ACCOUNT_NUMBER = "11",
+    MISSING_BANK_CODE = "12",
+    MISSING_BANK_ACCOUNT_NAME = "13",
+    INVALID_BANK_ACCOUNT_NUMBER = "21",
+    INVALID_BANK_CODE = "22",
+    INVALID_BANK_ACCOUNT_NAME = "23",
+    INVALID_AMOUNT = "24",
+    INVALID_TRANSFER_DESCRIPTION = "25",
+
+    INVALID_TAX_CODE = "51",
+    TAX_CODE_NOT_FOUND = "52",
+}

@@ -5,7 +5,7 @@ import { verify } from "../middlewares/verify.js";
 const router = express.Router();
 
 router.post("/ipn", (req, res) => {
-    return res.status(204);
+    return res.sendStatus(204);
 });
 
 router.get("/get_users", api.user.getUsers);

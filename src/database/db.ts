@@ -79,7 +79,7 @@ export class Database {
         this.databaseInfo!.totalUsers++;
         this.databaseInfo!.data.push(validatedUser);
 
-        this.save();
+        await this.save();
         return { id: validatedUser.id, email: validatedUser.email, ipnUrl: validatedUser.ipnUrl };
     }
 
@@ -92,7 +92,7 @@ export class Database {
         if (user.services.payos) await registerWebhook(result.data);
 
         this.databaseInfo!.data[this.databaseInfo!.data.findIndex((u) => u.id === user.id)] = result.data;
-        this.save();
+        await this.save();
         return { id: result.data.id, email: user.email, ipnUrl: user.ipnUrl };
     }
 
@@ -106,7 +106,7 @@ export class Database {
         this.databaseInfo!.totalUsers--;
         this.databaseInfo!.data.splice(index, 1);
 
-        this.save();
+        await this.save();
 
         return true;
     }

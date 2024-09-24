@@ -1,13 +1,16 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { PAYOS_URL } from "../constants.js";
 import { Database } from "../database/db.js";
 import { isInt32 } from "../utils/number.js";
 import { PayOSSchema } from "../schemas/index.js";
 import { getIpnUrl } from "../utils/getIpnUrl.js";
+import { isTestData } from "../utils/isTestData.js";
 import { generateSignature } from "../utils/encryption.js";
+import { PayOSResultHandler } from "../utils/resultHandler/index.js";
 
 import ValidateError from "../errors/validateError.js";
-import UnhandledError from "../errors/unhandledError.js";
+import PaymentApiError from "../errors/paymentApiError.js";
+import UnsupportedError from "../errors/unsupportedError.js";
 
 import type { Response } from "express";
 import type { User } from "../interfaces/database/user.js";
@@ -17,7 +20,7 @@ export async function getPaymentLink(
     body: IPayOS.PaymentLinkRequest,
     user: User
 ): Promise<IPayOS.PaymentLinkResponseData> {
-    if (!user.services.payos) throw new UnhandledError("PayOS", "getPaymentLink", user.email);
+    if (!user.services.payos) throw new UnsupportedError("PayOS", "getPaymentLink", user.email);
     const { apiKey, clientId, checksumKey } = user.services.payos;
 
     const result = await PayOSSchema.PaymentLinkRequestSchema.strict().safeParseAsync(body);
@@ -43,10 +46,12 @@ export async function getPaymentLink(
                 },
             }
         )
-        .then((res) => res.data);
-
-    // TODO: handle response error, signature
-    if (!res.data) throw new UnhandledError("PayOS", "transactionStatus", res.desc);
+        .then((res) => PayOSResultHandler.resultHandler(res.status, res.data))
+        .catch((err) => {
+            if (isAxiosError<IPayOS.PaymentLinkResponse>(err) && err.response)
+                return PayOSResultHandler.resultHandler(err.response.status, err.response.data);
+            throw err;
+        });
 
     return res.data;
 }
@@ -54,12 +59,11 @@ export async function getPaymentLink(
 export async function paymentLinkCallback(clientId: string, reqBody: IPayOS.PaymentLinkCallbackRequest, res: Response) {
     res.status(200).send({ success: true });
 
-    const transDateTime = new Date(reqBody.data.transactionDateTime).getTime();
-    const current = new Date().getTime();
-    if (transDateTime - current < 0) return;
+    if (isTestData("payos", reqBody.data)) return;
 
     const user = await Database.getInstance().getUserById(clientId);
-    if (!user) throw new UnhandledError("PayOS", "paymentLinkCallback", "User not found in database");
+    if (!user)
+        throw new PaymentApiError("PayOS", "paymentLinkCallback", "User not found in database", { clientId, reqBody });
 
     await axios.post(user.ipnUrl, reqBody.data, {
         params: {
@@ -72,7 +76,7 @@ export async function transactionStatus(
     body: IPayOS.TransactionStatusRequest,
     user: User
 ): Promise<IPayOS.TransactionStatusResponseData> {
-    if (!user.services.payos) throw new UnhandledError("PayOS", "transactionStatus", user.email);
+    if (!user.services.payos) throw new UnsupportedError("PayOS", "transactionStatus", user.email);
     const { apiKey, clientId, checksumKey } = user.services.payos;
 
     const result = await PayOSSchema.TransactionStatusRequestSchema.strict().safeParseAsync(body);
@@ -87,31 +91,40 @@ export async function transactionStatus(
                 "x-client-id": clientId,
             },
         })
-        .then((res) => res.data);
-
-    // TODO: handle response error, signature
-    if (!res.data) throw new UnhandledError("PayOS", "transactionStatus", res.desc);
+        .then((res) => PayOSResultHandler.resultHandler(res.status, res.data))
+        .catch((err) => {
+            if (isAxiosError<IPayOS.TransactionStatusResponse>(err) && err.response)
+                return PayOSResultHandler.resultHandler(err.response.status, err.response.data);
+            throw err;
+        });
 
     return res.data;
 }
 
 export async function registerWebhook(user: User) {
-    if (!user.services.payos) throw new UnhandledError("PayOS", "registerWebhook", user.email);
+    if (!user.services.payos) throw new UnsupportedError("PayOS", "registerWebhook", user.email);
 
     const { id } = user;
     const { apiKey, clientId } = user.services.payos;
 
     const ipnUrl = getIpnUrl("payos", id);
-    await axios.post(
-        `${PAYOS_URL}/confirm-webhook`,
-        {
-            webhookUrl: ipnUrl,
-        },
-        {
-            headers: {
-                "x-api-key": apiKey,
-                "x-client-id": clientId,
+    await axios
+        .post(
+            `${PAYOS_URL}/confirm-webhook`,
+            {
+                webhookUrl: ipnUrl,
             },
-        }
-    );
+            {
+                headers: {
+                    "x-api-key": apiKey,
+                    "x-client-id": clientId,
+                },
+            }
+        )
+        .then((res) => PayOSResultHandler.resultHandler(res.status, res.data))
+        .catch((err) => {
+            if (isAxiosError<IPayOS.ResponsePayOS>(err) && err.response)
+                PayOSResultHandler.resultHandler(err.response.status, err.response.data);
+            throw err;
+        });
 }

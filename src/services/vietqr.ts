@@ -3,7 +3,7 @@ import { VIETQR_URL } from "../constants.js";
 import { VietQRSchema } from "../schemas/index.js";
 
 import ValidateError from "../errors/validateError.js";
-import UnhandledError from "../errors/unhandledError.js";
+import ServiceUnknownResponseError from "../errors/serviceUnknownResponseError.js";
 
 import type { IVietQR } from "../interfaces/bankingServices/index.js";
 
@@ -17,7 +17,7 @@ export async function getQRCode(body: IVietQR.GenerateQRCodeRequest): Promise<IV
         .post<IVietQR.ResponseVietQR<IVietQR.GenerateQRCodeResponse>>(`${VIETQR_URL}/generate`, body)
         .then((res) => res.data);
 
-    if (!res.data) throw new UnhandledError("VietQR", "getQRCode", res.desc);
+    if (!res.data) throw new ServiceUnknownResponseError("VietQR", "getQRCode", res.desc);
 
     return res.data;
 }

@@ -1,5 +1,10 @@
 export interface ResponsePayOS<
-    T extends PaymentLinkResponseData | PaymentLinkCallbackRequestData | TransactionStatusResponseData
+    T extends
+        | PaymentLinkResponseData
+        | PaymentLinkCallbackRequestData
+        | TransactionStatusResponseData
+        | Record<string, unknown>
+        | undefined = undefined
 > {
     /** Response code */
     code: string;
@@ -9,6 +14,7 @@ export interface ResponsePayOS<
     data: T;
 }
 
+/** @see https://payos.vn/docs/api/#operation/payment-request */
 export interface PaymentLinkRequest {
     /** Order code */
     orderCode: number;
@@ -40,6 +46,7 @@ export interface PaymentLinkRequest {
     signature: string;
 }
 
+/** @see https://payos.vn/docs/api/#operation/payment-request */
 export interface PaymentLinkResponse extends ResponsePayOS<PaymentLinkResponseData> {
     /** Signature to verify the data integrity */
     signature: string;
@@ -64,6 +71,7 @@ export interface PaymentLinkResponseData extends Pick<Transaction, "amount" | "a
     qrCode: string;
 }
 
+/** @see https://payos.vn/docs/du-lieu-tra-ve/webhook/ */
 export interface PaymentLinkCallbackRequest extends ResponsePayOS<PaymentLinkCallbackRequestData> {
     /** Payment status */
     success: boolean;
@@ -93,11 +101,13 @@ export interface Item {
     price: number;
 }
 
+/** @see https://payos.vn/docs/api/#operation/payment-requests */
 export interface TransactionStatusRequest {
     /** Payment link ID or order code */
     id: number | string;
 }
 
+/** @see https://payos.vn/docs/api/#operation/payment-requests */
 export interface TransactionStatusResponse extends ResponsePayOS<TransactionStatusResponseData> {
     /** Signature to verify the data integrity */
     signature: string;
@@ -156,4 +166,19 @@ export enum PAYMENT_STATUS {
     EXPIRED = "EXPIRED",
     PENDING = "PENDING",
     CANCELLED = "CANCELLED",
+}
+
+export enum RESULT_CODE {
+    SUCCESS = "00",
+
+    BAD_FORMAT_REQUEST = "20",
+    INVALID_SIGNATURE = "201",
+    ORDER_CODE_NOT_EXISTS = "101",
+    /** This is returned when passing invalid pair of API key and Client ID (with status 200) */
+    PAYMENT_GATEWAY_ERROR = "214",
+    ORDER_ID_ALREADY_EXISTS = "231",
+
+    MISSING_CREDENTIALS = "401",
+    /** This is returned when passing float order code */
+    SERVICE_UNAVAILABLE = "503",
 }
