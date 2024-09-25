@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { colors, decorators } from "./settings.js";
 import type { Request, Response, NextFunction } from "express";
-import { ERROR_LOG_PATH } from "../../constants.js";
+import { ERROR_LOG_PATH, LOG_PATH, REQUEST_LOG_PATH } from "../../constants.js";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
     res.on("finish", async () => {
@@ -39,7 +39,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
 
         console.log(log);
 
-        const absolutePath = path.resolve(process.cwd(), "logs", "request.log");
+        const absolutePath = path.resolve(process.cwd(), LOG_PATH, REQUEST_LOG_PATH);
         const fileLog = `[${ip}] [${localTimestamp}] ${method} - "${uri}" - ${statusCode}`;
         try {
             await fs.promises.access(absolutePath);
@@ -74,11 +74,10 @@ export async function errorLogger(err: Error, req: Request) {
     const keys = Object.keys(err);
     for (const key of keys) {
         if (key === "name" || key === "message" || key === "stack") continue;
-        log += `\n\t${decorators.singleLine} [${key.toUpperCase()}]: ${JSON.stringify(
-            (err as any)[key],
-            undefined,
-            4
-        ).replace(/\n/g, "\n\t\t")}`;
+        log += `\n\t${decorators.singleLine} [${key.toUpperCase()}]: ${safeStringify((err as any)[key], 4).replace(
+            /\n/g,
+            "\n\t\t"
+        )}`;
     }
 
     if (err.stack) {
@@ -91,7 +90,7 @@ export async function errorLogger(err: Error, req: Request) {
         }
     }
 
-    const absolutePath = path.resolve(process.cwd(), "logs", ERROR_LOG_PATH);
+    const absolutePath = path.resolve(process.cwd(), LOG_PATH, ERROR_LOG_PATH);
     try {
         await fs.promises.access(absolutePath);
         await fs.promises.appendFile(absolutePath, `${log}\n`);
@@ -99,4 +98,23 @@ export async function errorLogger(err: Error, req: Request) {
         await fs.promises.mkdir(path.dirname(absolutePath), { recursive: true });
         await fs.promises.writeFile(absolutePath, `${log}\n`);
     }
+}
+
+function safeStringify(obj: any, space = 4) {
+    const seen = new Map<any, string>(); // Track objects and their key paths
+
+    return JSON.stringify(
+        obj,
+        function (key, value) {
+            // If we've already seen this object, return a reference to its path
+            if (typeof value === "object" && value !== null) {
+                if (seen.has(value)) {
+                    return `[Circular -> *${seen.get(value)}]`;
+                }
+                seen.set(value, this ? key : "root"); // Save the path of this object
+            }
+            return value;
+        },
+        space
+    );
 }

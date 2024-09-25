@@ -57,9 +57,9 @@ export interface GenerateQRCodeRequest {
 
 export interface GenerateQRCodeResponse {
     /** Bank identification code (BIN) */
-    acpId: number;
+    acpId?: number;
     /** Name of the bank account */
-    accountName: string;
+    accountName?: string;
     /** Text format QR */
     qrCode: string;
     /** Data URI format QR */

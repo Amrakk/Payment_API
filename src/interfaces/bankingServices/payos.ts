@@ -127,11 +127,11 @@ export interface TransactionStatusResponseData {
     /** Status of the payment link */
     status: PAYMENT_STATUS;
     /** Time when the payment link was created */
-    createdAt: string;
+    createdAt: Date;
     /** List of transactions related to the order */
     transactions: Transaction[] | null;
     /** Time when the payment link was canceled */
-    canceledAt: string | null;
+    canceledAt: Date | null;
     /** Reason for the cancellation */
     cancellationReason: string | null;
 }
@@ -146,7 +146,7 @@ export interface Transaction {
     /** Transaction reference code used for reconciliation with the bank */
     reference: string;
     /** Date and time when the transaction was successfully completed */
-    transactionDateTime: string;
+    transactionDateTime: Date;
     /** Bank ID of the customer making the transfer (BIN) */
     counterAccountBankId: string | null;
     /** Bank name of the customer making the transfer */

@@ -303,7 +303,7 @@ export enum RESULT_CODE {
     TRANSACTION_CANCELLED = 1003,
     /** Transaction failed because the amount exceeds daily /monthly payment limit. */
     EXCEEDS_PAYMENT_LIMIT = 1004,
-    /** Transaction failed because the url or QR code expired. */
+    /** Transaction failed because the url or QR code expired. (status = 200) */
     URL_OR_QR_CODE_EXPIRED = 1005,
     /** Transaction failed because user has denied to confirm the payment. */
     USER_DENIED_PAYMENT = 1006,

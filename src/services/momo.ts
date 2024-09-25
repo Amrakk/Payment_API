@@ -84,6 +84,7 @@ export async function transactionStatus(
     const response = await axios
         .post<IMomo.TransactionStatusResponse>(`${MOMO_URL}/query`, {
             ...rest,
+            partnerCode: partnerCode,
             signature: signature,
         })
         .then((res) => MomoResultHandler.resultHandler(res.status, res.data))

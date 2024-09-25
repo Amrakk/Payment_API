@@ -10,8 +10,11 @@ export async function getUsers(
     res: Response<IResponse<Omit<User, "services" | "id">[]>>,
     next: NextFunction
 ) {
+    const debugKey = req.headers["x-debug-key"];
+    // TODO: verify debug key
+
     try {
-        const users = await Database.getInstance().getUsers();
+        const users = await Database.getInstance().getUsers(debugKey !== undefined);
         return res.status(200).json({ code: RESPONSE_CODE.SUCCESS, message: RESPONSE_MESSAGE.SUCCESS, data: users });
     } catch (err) {
         next(err);

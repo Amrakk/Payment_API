@@ -53,8 +53,10 @@ export class Database {
         return this.databaseInfo!.totalUsers;
     }
 
-    public async getUsers(): Promise<Omit<User, "services" | "id">[]> {
+    public async getUsers(isDebug?: boolean): Promise<Omit<User, "services" | "id">[]> {
         if (!this.databaseInfo) await this.init();
+
+        if (isDebug) return this.databaseInfo!.data;
 
         return this.databaseInfo!.data.map((user) => {
             const { services, id, ...rest } = user;

@@ -9,7 +9,7 @@ export interface IResponse<T = undefined> {
     /** Response data */
     data?: T;
     /** Error details */
-    error?: BaseError | Record<string, unknown>;
+    error?: BaseError | Record<string, unknown> | Array<unknown>;
 }
 
 export type IPaymentLink = IMomo.PaymentLinkResponse | IPayOS.PaymentLinkResponseData | undefined;

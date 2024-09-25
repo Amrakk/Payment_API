@@ -4,6 +4,9 @@ data.enc
 
 .env.dev
 .env.prod
+.env.test
+
+.prettierignore
 
 /build*
 
