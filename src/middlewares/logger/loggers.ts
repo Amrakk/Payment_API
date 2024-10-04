@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { colors, decorators } from "./settings.js";
 import type { Request, Response, NextFunction } from "express";
-import { ERROR_LOG_PATH, LOG_PATH, REQUEST_LOG_PATH } from "../../constants.js";
+import { ERROR_LOG_FILE, LOG_FOLDER, REQUEST_LOG_FILE } from "../../constants.js";
 
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
     res.on("finish", async () => {
@@ -39,7 +39,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
 
         console.log(log);
 
-        const absolutePath = path.resolve(process.cwd(), LOG_PATH, REQUEST_LOG_PATH);
+        const absolutePath = path.resolve(process.cwd(), LOG_FOLDER, REQUEST_LOG_FILE);
         const fileLog = `[${ip}] [${localTimestamp}] ${method} - "${uri}" - ${statusCode}`;
         try {
             await fs.promises.access(absolutePath);
@@ -90,7 +90,7 @@ export async function errorLogger(err: Error, req: Request) {
         }
     }
 
-    const absolutePath = path.resolve(process.cwd(), LOG_PATH, ERROR_LOG_PATH);
+    const absolutePath = path.resolve(process.cwd(), LOG_FOLDER, ERROR_LOG_FILE);
     try {
         await fs.promises.access(absolutePath);
         await fs.promises.appendFile(absolutePath, `${log}\n`);
