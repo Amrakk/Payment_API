@@ -75,12 +75,9 @@ export const UserSchema = (users: User[], update?: { updateUser: User }) => {
                         await axios
                             .post(url)
                             .then((res) => {
-                                console.log(res.status);
                                 return res.status === 204;
                             })
                             .catch((_) => {
-                                // console.log(_);
-                                console.log(4152525, url);
                                 return false;
                             }),
                     {

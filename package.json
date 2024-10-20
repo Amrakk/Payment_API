@@ -8,13 +8,13 @@
         "clean:node": "rimraf ./build.node",
 
         "build": "bun run clean && bun build ./src/index.ts --outdir ./build --target node",
-        "build:node": "bun run clean:node && tsc --project tsconfig.node.json",
+        "build:node": "npm run clean:node && tsc --project tsconfig.node.json",
 
         "dev": "bun --watch --env-file=.env.dev src/index.ts",
         "dev:node": "node --env-file=.env.dev ./build.node/index.js",
 
         "start": "bun --watch --env-file=.env.prod ./build/index.js",
-        "start:node": "node --env-file=.env.prod ./build/index.js",
+        "start:node": "node --env-file=.env.dev ./build.node/index.js",
 
         "test": "bun test --timeout=10000 --env-file=.env.test --coverage ./test/**/*.test.ts"
     },

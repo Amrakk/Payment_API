@@ -1,0 +1,13 @@
+.git
+logs
+test
+build*
+node_modules
+
+.env*
+.gitignore
+.prettierignore
+
+*.html
+*.md
+*.enc
