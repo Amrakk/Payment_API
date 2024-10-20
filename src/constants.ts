@@ -5,9 +5,9 @@ export const HOST = process.env.HOST!;
 export const DB_PATH = process.env.DB_PATH ?? "data.enc";
 
 // LOG
-export const LOG_PATH = process.env.LOG_PATH ?? "logs";
-export const ERROR_LOG_PATH = process.env.ERROR_LOG_PATH ?? "error.log";
-export const REQUEST_LOG_PATH = process.env.REQUEST_LOG_PATH ?? "request.log";
+export const LOG_FOLDER = process.env.LOG_FOLDER ?? "logs";
+export const ERROR_LOG_FILE = process.env.ERROR_LOG_FILE ?? "error.log";
+export const REQUEST_LOG_FILE = process.env.REQUEST_LOG_FILE ?? "request.log";
 
 // ENCRYPTION
 export const SECRET_KEY = process.env.SECRET_KEY!;

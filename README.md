@@ -1,15 +1,13 @@
 # payment_api
 
-To install dependencies:
+build image:
 
 ```bash
-bun install
+docker build -t <IMAGE NAME> .
 ```
 
-To run:
+run container:
 
 ```bash
-bun run index.ts
+docker run --env-file ./.env.dev -p 5000:5000 <IMAGE NAME>
 ```
-
-This project was created using `bun init` in bun v1.1.26. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.

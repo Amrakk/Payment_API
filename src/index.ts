@@ -48,3 +48,7 @@ if (process.platform === "win32") {
 process.on("SIGINT", () => {
     app.emit("close");
 });
+
+process.on("SIGTERM", () => {
+    app.emit("close");
+});
