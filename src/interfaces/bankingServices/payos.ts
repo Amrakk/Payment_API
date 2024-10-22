@@ -65,6 +65,8 @@ export interface PaymentLinkResponseData extends Pick<Transaction, "amount" | "a
     paymentLinkId: string;
     /** Payment status */
     status: PAYMENT_STATUS;
+    /** Expired time of the payment link */
+    expiredAt?: number;
     /** Checkout URL */
     checkoutUrl: string;
     /** QR code */
