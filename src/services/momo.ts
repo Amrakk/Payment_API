@@ -38,6 +38,7 @@ export async function getPaymentLink(
     const response = await axios
         .post<IMomo.PaymentLinkResponse>(`${MOMO_URL}/create`, {
             ...rest,
+            partnerCode,
             ipnUrl: apiIpnUrl,
             signature: signature,
         })
