@@ -3,11 +3,14 @@ import { SECRET_KEY, SECRET_IV, ENCRYPTION_METHOD } from "../constants.js";
 
 import UnsupportedError from "../errors/unsupportedError.js";
 
-const supportedServices = ["momo", "payos"];
+const supportedServices = ["momo", "payos", "vnpay"];
 export function generateSignature(secretKey: string, rawSignature: string, service: string): string {
     if (!supportedServices.includes(service)) throw new UnsupportedError(service, "generateSignature");
 
-    return crypto.createHmac("sha256", secretKey).update(rawSignature).digest("hex");
+    return crypto
+        .createHmac(service === "vnpay" ? "sha512" : "sha256", secretKey)
+        .update(rawSignature)
+        .digest("hex");
 }
 
 const key = crypto.createHash("sha512").update(SECRET_KEY).digest("hex").substring(0, 32);

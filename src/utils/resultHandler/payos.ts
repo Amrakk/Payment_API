@@ -1,6 +1,6 @@
 import { RESULT_CODE } from "../../interfaces/bankingServices/payos.js";
 
-import PaymentApiError from "../../errors/paymentApiError.js";
+import PaymentApiError from "../../errors/paymentAPIError.js";
 import ApiResponseError from "../../errors/apiResponseError.js";
 import BadFormatRequestError from "../../errors/badFormatRequestError.js";
 import ServiceUnknownResponseError from "../../errors/serviceUnknownResponseError.js";

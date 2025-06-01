@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { IVietQR } from "../interfaces/bankingServices/index.js";
-import axios from "axios";
 import { VietQR } from "../services/index.js";
 
 export const TemplateSchema = z.nativeEnum(IVietQR.TEMPLATE);

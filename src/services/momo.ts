@@ -8,7 +8,7 @@ import { MomoResultHandler } from "../utils/resultHandler/index.js";
 import { TransactionStatusRequestInputSchema } from "../schemas/momo.js";
 
 import ValidateError from "../errors/validateError.js";
-import PaymentApiError from "../errors/paymentApiError.js";
+import PaymentApiError from "../errors/paymentAPIError.js";
 import UnsupportedError from "../errors/unsupportedError.js";
 
 import type { Response } from "express";

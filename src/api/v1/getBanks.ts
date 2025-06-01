@@ -1,4 +1,5 @@
-import { VietQR, Momo } from "../../services/index.js";
+import { Database } from "../../database/db.js";
+import { VietQR, Momo, VNPay } from "../../services/index.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
 import type { NextFunction, Request, Response } from "express";
@@ -12,6 +13,20 @@ export async function getBanks(req: Request, res: Response<IResponse<IBanks>>, n
 
         if (service === "vietqr") banks = await VietQR.getBanks();
         else if (service === "momo") banks = await Momo.getBanks();
+        else if (service === "vnpay") {
+            const clientId = req.headers["x-client-id"];
+            const user = await Database.getInstance().getUserById(clientId as string);
+
+            const tmnCode = user?.services.vnpay?.tmnCode;
+            if (!tmnCode)
+                return res.status(400).send({
+                    code: RESPONSE_CODE.BAD_REQUEST,
+                    message: RESPONSE_MESSAGE.BAD_REQUEST,
+                    error: "User not found or TMN code not set",
+                });
+
+            banks = await VNPay.getBanks(tmnCode);
+        }
 
         if (!banks)
             return res

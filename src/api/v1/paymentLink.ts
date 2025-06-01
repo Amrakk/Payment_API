@@ -1,4 +1,4 @@
-import { Momo, PayOS } from "../../services/index.js";
+import { Momo, PayOS, VNPay } from "../../services/index.js";
 import { errorLogger } from "../../middlewares/logger/loggers.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
@@ -13,7 +13,12 @@ export async function paymentLink(req: Request, res: Response<IResponse<IPayment
         let result: IPaymentLink;
 
         if (service === "momo") result = await Momo.getPaymentLink(req.body, user);
-        if (service === "payos") result = await PayOS.getPaymentLink(req.body, user);
+        else if (service === "payos") result = await PayOS.getPaymentLink(req.body, user);
+        else if (service === "vnpay") {
+            const vnp_IpAddr =
+                req.headers["x-forwarded-for"] || req.connection.remoteAddress || req.socket.remoteAddress;
+            result = await VNPay.getPaymentLink({ ...req.body, vnp_IpAddr }, user);
+        }
 
         if (!result)
             return res

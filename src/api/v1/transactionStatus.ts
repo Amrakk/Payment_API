@@ -16,7 +16,7 @@ export async function transactionStatus(
         let result: ITransactionStatus;
 
         if (service === "momo") result = await Momo.transactionStatus(req.body, user);
-        if (service === "payos") result = await PayOS.transactionStatus(req.body, user);
+        else if (service === "payos") result = await PayOS.transactionStatus(req.body, user);
 
         if (!result)
             return res

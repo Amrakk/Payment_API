@@ -5,6 +5,25 @@ import { verify } from "../middlewares/verify.js";
 const router = express.Router();
 
 router.post("/ipn", (req, res) => {
+    console.log(JSON.stringify(req.body, undefined, 2));
+    return res.sendStatus(204);
+});
+
+router.get("/ipn", (req, res) => {
+    console.log(JSON.stringify(req.body, undefined, 2));
+    res.status(200).send({
+        RspCode: "00",
+        Message: "Confirm Success",
+    });
+});
+
+router.get("/cancel", (req, res) => {
+    console.log(JSON.stringify(req.body, undefined, 2));
+    return res.sendStatus(204);
+});
+
+router.get("/return", (req, res) => {
+    console.log(JSON.stringify(req.body, undefined, 2));
     return res.sendStatus(204);
 });
 
