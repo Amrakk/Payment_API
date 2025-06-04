@@ -36,7 +36,7 @@ export async function paymentLinkCallback(req: Request, res: Response) {
 
     try {
         if (service === "momo") return await Momo.paymentLinkCallback(token as string, req.body, res);
-        if (service === "payos") return await PayOS.paymentLinkCallback(token as string, req.body, res);
+        else if (service === "payos") return await PayOS.paymentLinkCallback(token as string, req.body, res);
 
         return res
             .status(409)

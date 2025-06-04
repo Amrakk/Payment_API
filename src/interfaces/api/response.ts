@@ -17,7 +17,11 @@ export type IPaymentLink =
     | IPayOS.PaymentLinkResponseData
     | IVNPay.PaymentLinkResponse
     | undefined;
-export type ITransactionStatus = IMomo.TransactionStatusResponse | IPayOS.TransactionStatusResponseData | undefined;
+export type ITransactionStatus =
+    | IMomo.TransactionStatusResponse
+    | IPayOS.TransactionStatusResponseData
+    | IVNPay.TransactionStatusResponse
+    | undefined;
 
 export type IGetQRCode = IVietQR.GenerateQRCodeResponse | undefined;
 export type IBanks = IVietQR.Bank[] | IMomo.ResponseGetBanks | IVNPay.Bank[] | undefined;

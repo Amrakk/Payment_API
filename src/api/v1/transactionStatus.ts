@@ -1,4 +1,4 @@
-import { Momo, PayOS } from "../../services/index.js";
+import { Momo, PayOS, VNPay } from "../../services/index.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
 import type { NextFunction, Request, Response } from "express";
@@ -17,6 +17,11 @@ export async function transactionStatus(
 
         if (service === "momo") result = await Momo.transactionStatus(req.body, user);
         else if (service === "payos") result = await PayOS.transactionStatus(req.body, user);
+        else if (service === "vnpay") {
+            const vnp_IpAddr =
+                req.headers["x-forwarded-for"] || req.connection.remoteAddress || req.socket.remoteAddress;
+            result = await VNPay.transactionStatus({ ...req.body, vnp_IpAddr }, user);
+        }
 
         if (!result)
             return res

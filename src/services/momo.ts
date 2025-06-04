@@ -5,7 +5,6 @@ import { MomoSchema } from "../schemas/index.js";
 import { getIpnUrl } from "../utils/getIpnUrl.js";
 import { generateSignature } from "../utils/encryption.js";
 import { MomoResultHandler } from "../utils/resultHandler/index.js";
-import { TransactionStatusRequestInputSchema } from "../schemas/momo.js";
 
 import ValidateError from "../errors/validateError.js";
 import PaymentApiError from "../errors/paymentAPIError.js";
@@ -74,7 +73,7 @@ export async function transactionStatus(
     if (!user.services.momo) throw new UnsupportedError("momo", "transactionStatus", user.email);
     const { accessKey, secretKey, partnerCode } = user.services.momo;
 
-    const result = await TransactionStatusRequestInputSchema.strict().safeParseAsync(body);
+    const result = await MomoSchema.TransactionStatusRequestInputSchema.strict().safeParseAsync(body);
     if (!result.success) throw new ValidateError("getPaymentLink", result.error.errors);
 
     const { ...rest } = result.data;
