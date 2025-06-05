@@ -14,7 +14,7 @@ import type { User } from "../interfaces/database/user";
 import type { IZaloPay } from "../interfaces/bankingServices";
 import type { Response } from "express";
 
-export async function getBanks(appid: string, key1: string) {
+export async function getBanks(appid: number, key1: string) {
     const reqtime = Date.now();
     const mac = generateSignature(key1, `${appid}|${reqtime}`, "zalopay");
 
