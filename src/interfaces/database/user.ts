@@ -12,6 +12,8 @@ export interface User {
 export interface Services {
     momo?: Momo;
     payos?: PayOS;
+    vnpay?: VNPay;
+    zalopay?: ZaloPay;
 }
 
 export interface PayOS {
@@ -32,4 +34,20 @@ export interface Momo {
     secretKey: string;
     /** Used to encrypt data by RSA algorithm */
     publicKey: string | null;
+}
+
+export interface VNPay {
+    /** Merchant code */
+    tmnCode: string;
+    /** Merchant secret key */
+    hashSecret: string;
+}
+
+export interface ZaloPay {
+    /** ZaloPay app ID */
+    appid: number;
+    /** ZaloPay key1 */
+    key1: string;
+    /** ZaloPay key2 */
+    key2: string;
 }

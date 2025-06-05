@@ -2,7 +2,7 @@ import { BASE_URL, HOST } from "../constants.js";
 
 import UnsupportedError from "../errors/unsupportedError.js";
 
-const supportedServices = ["momo", "payos"];
+const supportedServices = ["momo", "payos", "zalopay"];
 
 /** Return URL with format `HOST/payment_link_callback?service=<SERVICE>>&token=<CLIENT_ID>` */
 export function getIpnUrl(service: string, clientId: string): string {

@@ -1,4 +1,4 @@
-import { Momo, PayOS } from "../../services/index.js";
+import { Momo, PayOS, VNPay, ZaloPay } from "../../services/index.js";
 import { errorLogger } from "../../middlewares/logger/loggers.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../../interfaces/api/index.js";
 
@@ -13,7 +13,13 @@ export async function paymentLink(req: Request, res: Response<IResponse<IPayment
         let result: IPaymentLink;
 
         if (service === "momo") result = await Momo.getPaymentLink(req.body, user);
-        if (service === "payos") result = await PayOS.getPaymentLink(req.body, user);
+        else if (service === "payos") result = await PayOS.getPaymentLink(req.body, user);
+        else if (service === "zalopay") result = await ZaloPay.getPaymentLink(req.body, user);
+        else if (service === "vnpay") {
+            const vnp_IpAddr =
+                req.headers["x-forwarded-for"] || req.connection.remoteAddress || req.socket.remoteAddress;
+            result = await VNPay.getPaymentLink({ ...req.body, vnp_IpAddr }, user);
+        }
 
         if (!result)
             return res
@@ -31,7 +37,8 @@ export async function paymentLinkCallback(req: Request, res: Response) {
 
     try {
         if (service === "momo") return await Momo.paymentLinkCallback(token as string, req.body, res);
-        if (service === "payos") return await PayOS.paymentLinkCallback(token as string, req.body, res);
+        else if (service === "payos") return await PayOS.paymentLinkCallback(token as string, req.body, res);
+        else if (service === "zalopay") return await ZaloPay.paymentLinkCallback(token as string, req.body, res);
 
         return res
             .status(409)
