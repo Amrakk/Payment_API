@@ -2,9 +2,9 @@ import BaseError from "./baseError.js";
 import { RESPONSE_CODE, RESPONSE_MESSAGE } from "../interfaces/api/index.js";
 
 import type { IResponse } from "../interfaces/api/index.js";
-import type { IMomo, IPayOS, IVNPay } from "../interfaces/bankingServices/index.js";
+import type { IMomo, IPayOS, IVNPay, IZaloPay } from "../interfaces/bankingServices/index.js";
 
-export default class ApiResponseError<T extends "momo" | "payos" | "vnpay"> extends BaseError {
+export default class ApiResponseError<T extends "momo" | "payos" | "vnpay" | "zalopay"> extends BaseError {
     service: T;
     statusCode: number;
     data: ResponseMapping<T>;
@@ -26,7 +26,7 @@ export default class ApiResponseError<T extends "momo" | "payos" | "vnpay"> exte
     }
 }
 
-type ResponseErrorService = "momo" | "payos" | "vnpay";
+type ResponseErrorService = "momo" | "payos" | "vnpay" | "zalopay";
 
 type ResponseMapping<T extends ResponseErrorService> = { possibleReasons?: string[] } & (T extends "momo"
     ? IMomo.PaymentLinkResponse | IMomo.TransactionStatusResponse
@@ -34,4 +34,6 @@ type ResponseMapping<T extends ResponseErrorService> = { possibleReasons?: strin
     ? IPayOS.ResponsePayOS | IPayOS.PaymentLinkResponse | IPayOS.TransactionStatusResponse
     : T extends "vnpay"
     ? IVNPay.TransactionStatusResponse
+    : T extends "zalopay"
+    ? IZaloPay.PaymentLinkResponse | IZaloPay.TransactionStatusResponse
     : never);

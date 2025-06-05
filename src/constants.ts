@@ -26,3 +26,6 @@ export const PAYOS_URL = process.env.PAYOS_URL!;
 // VNPAY
 export const VNPAY_URL = process.env.VNPAY_URL!;
 export const VNPAY_VERSION = process.env.VNPAY_VERSION!;
+
+// ZALOPAY
+export const ZALOPAY_URL = process.env.ZALOPAY_URL!;

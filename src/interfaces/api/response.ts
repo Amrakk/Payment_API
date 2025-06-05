@@ -1,5 +1,5 @@
 import type BaseError from "../../errors/baseError.js";
-import type { IMomo, IVietQR, IPayOS, IVNPay } from "../bankingServices/index.js";
+import type { IMomo, IVietQR, IPayOS, IVNPay, IZaloPay } from "../bankingServices/index.js";
 
 export interface IResponse<T = undefined> {
     /** Response code */
@@ -16,15 +16,22 @@ export type IPaymentLink =
     | IMomo.PaymentLinkResponse
     | IPayOS.PaymentLinkResponseData
     | IVNPay.PaymentLinkResponse
+    | IZaloPay.PaymentLinkResponse
     | undefined;
 export type ITransactionStatus =
     | IMomo.TransactionStatusResponse
     | IPayOS.TransactionStatusResponseData
     | IVNPay.TransactionStatusResponse
+    | IZaloPay.TransactionStatusResponse
     | undefined;
 
 export type IGetQRCode = IVietQR.GenerateQRCodeResponse | undefined;
-export type IBanks = IVietQR.Bank[] | IMomo.ResponseGetBanks | IVNPay.Bank[] | undefined;
+export type IBanks =
+    | IVietQR.Bank[]
+    | IMomo.ResponseGetBanks
+    | IVNPay.Bank[]
+    | IZaloPay.GetBanksResponse["banks"]
+    | undefined;
 
 export enum RESPONSE_CODE {
     SUCCESS = 0,

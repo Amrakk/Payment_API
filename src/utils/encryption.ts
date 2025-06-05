@@ -3,7 +3,7 @@ import { SECRET_KEY, SECRET_IV, ENCRYPTION_METHOD } from "../constants.js";
 
 import UnsupportedError from "../errors/unsupportedError.js";
 
-const supportedServices = ["momo", "payos", "vnpay"];
+const supportedServices = ["momo", "payos", "vnpay", "zalopay"];
 export function generateSignature(secretKey: string, rawSignature: string, service: string): string {
     if (!supportedServices.includes(service)) throw new UnsupportedError(service, "generateSignature");
 

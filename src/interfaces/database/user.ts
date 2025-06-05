@@ -13,6 +13,7 @@ export interface Services {
     momo?: Momo;
     payos?: PayOS;
     vnpay?: VNPay;
+    zalopay?: ZaloPay;
 }
 
 export interface PayOS {
@@ -40,4 +41,13 @@ export interface VNPay {
     tmnCode: string;
     /** Merchant secret key */
     hashSecret: string;
+}
+
+export interface ZaloPay {
+    /** ZaloPay app ID */
+    appid: number;
+    /** ZaloPay key1 */
+    key1: string;
+    /** ZaloPay key2 */
+    key2: string;
 }

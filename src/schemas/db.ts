@@ -25,6 +25,13 @@ const VNPaySchema = z.object({
     hashSecret: z.string(),
 });
 
+/** Refer to: {@link ZaloPay ZaloPay} */
+const ZaloPaySchema = z.object({
+    appid: z.number(),
+    key1: z.string(),
+    key2: z.string(),
+});
+
 /** Refer to: {@link User User} */
 export const UserSchema = (users: User[], update?: { updateUser: User }) => {
     if (update)
@@ -56,6 +63,7 @@ export const UserSchema = (users: User[], update?: { updateUser: User }) => {
                     momo: MomoSchema.optional(),
                     payos: PayOSSchema.optional(),
                     vnpay: VNPaySchema.optional(),
+                    zalopay: ZaloPaySchema.optional(),
                 }),
             })
             .strict();
